@@ -1,90 +1,109 @@
-"""Binary Search Tree (BST) Implementation.
+"""
+Binary Search Tree (BST) Implementation.
 
-This module provides a complete implementation of a Binary Search Tree,
-including classes for nodes and the tree itself, with methods for insertion,
-searching, and inorder traversal.
+This module provides a basic implementation of a Binary Search Tree with
+insertion, search, and inorder traversal capabilities.
 """
 
-from __future__ import annotations
-from dataclasses import dataclass
-from typing import Any, List, Optional
+from typing import Optional, Any
 
-
-@dataclass
 class Node:
-    """A node in a binary search tree."""
-    value: Any
-    left: Optional[Node] = None
-    right: Optional[Node] = None
-
+    """
+    A class representing a node in a Binary Search Tree.
+    """
+    def __init__(self, key: Any):
+        """
+        Initialize a node with a key and no children.
+        
+        Args:
+            key: The value to be stored in the node.
+        """
+        self.key = key
+        self.left: Optional[Node] = None
+        self.right: Optional[Node] = None
 
 class BST:
-    """A binary search tree supporting insertion, search, and traversal."""
-
-    def __init__(self) -> None:
-        """Initialize an empty binary search tree."""
+    """
+    A class representing a Binary Search Tree.
+    """
+    def __init__(self):
+        """Initialize an empty BST."""
         self.root: Optional[Node] = None
 
-    def insert(self, value: Any) -> None:
-        """Insert a value into the tree."""
+    def insert(self, key: Any) -> None:
+        """
+        Insert a key into the BST.
+        
+        Args:
+            key: The value to be inserted.
+        """
         if self.root is None:
-            self.root = Node(value)
+            self.root = Node(key)
         else:
-            self._insert_recursive(self.root, value)
+            self._insert_recursive(self.root, key)
 
-    def _insert_recursive(self, current: Node, value: Any) -> None:
-        """Helper method to insert a value recursively."""
-        if value < current.value:
+    def _insert_recursive(self, current: Node, key: Any) -> None:
+        if key < current.key:
             if current.left is None:
-                current.left = Node(value)
+                current.left = Node(key)
             else:
-                self._insert_recursive(current.left, value)
+                self._insert_recursive(current.left, key)
         else:
             if current.right is None:
-                current.right = Node(value)
+                current.right = Node(key)
             else:
-                self._insert_recursive(current.right, value)
+                self._insert_recursive(current.right, key)
 
-    def search(self, value: Any) -> bool:
-        """Search for a value in the tree. Returns True if found, False otherwise."""
-        return self._search_recursive(self.root, value)
+    def search(self, key: Any) -> bool:
+        """
+        Search for a key in the BST.
+        
+        Args:
+            key: The value to search for.
+            
+        Returns:
+            True if the key is found, False otherwise.
+        """
+        return self._search_recursive(self.root, key)
 
-    def _search_recursive(self, current: Optional[Node], value: Any) -> bool:
-        """Helper method to search for a value recursively."""
+    def _search_recursive(self, current: Optional[Node], key: Any) -> bool:
         if current is None:
             return False
-        if current.value == value:
+        if current.key == key:
             return True
-        if value < current.value:
-            return self._search_recursive(current.left, value)
-        return self._search_recursive(current.right, value)
+        if key < current.key:
+            return self._search_recursive(current.left, key)
+        return self._search_recursive(current.right, key)
 
-    def inorder_traversal(self) -> List[Any]:
-        """Perform an inorder traversal and return the list of values."""
-        values: List[Any] = []
-        self._inorder_recursive(self.root, values)
-        return values
+    def inorder_traversal(self) -> list:
+        """
+        Perform an inorder traversal of the BST.
+        
+        Returns:
+            A list of keys in ascending order.
+        """
+        result = []
+        self._inorder_recursive(self.root, result)
+        return result
 
-    def _inorder_recursive(self, current: Optional[Node], values: List[Any]) -> None:
-        """Helper method to perform inorder traversal recursively."""
+    def _inorder_recursive(self, current: Optional[Node], result: list) -> None:
         if current:
-            self._inorder_recursive(current.left, values)
-            values.append(current.value)
-            self._inorder_recursive(current.right, values)
-
+            self._inorder_recursive(current.left, result)
+            result.append(current.key)
+            self._inorder_recursive(current.right, result)
 
 if __name__ == "__main__":
-    # Demonstration of the BST implementation
-    tree = BST()
-    data = [5, 3, 7, 2, 4, 6, 8]
+    # Demo
+    bst = BST()
+    elements = [50, 30, 20, 40, 70, 60, 80]
     
-    print(f"Inserting values: {data}")
-    for x in data:
-        tree.insert(x)
+    print(f"Inserting elements: {elements}")
+    for el in elements:
+        bst.insert(el)
     
-    print(f"Inorder Traversal: {tree.inorder_traversal()}")
+    print(f"Inorder traversal: {bst.inorder_traversal()}")
     
-    search_values = [4, 9]
-    for val in search_values:
-        found = tree.search(val)
-        print(f"Searching for {val}: {'Found' if found else 'Not Found'}")
+    search_keys = [40, 90]
+    for key in search_keys:
+        found = bst.search(key)
+        print(f"Searching for {key}: {'Found' if found else 'Not Found'}")
