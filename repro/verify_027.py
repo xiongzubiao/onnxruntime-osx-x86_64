@@ -1,53 +1,64 @@
 """
-CSV Parser Repro Script (verify_027.py)
-This module provides a simple CSV parser that correctly handles quoted fields,
-including cases where the delimiter or quote character is embedded within a field.
+A complete, runnable Python program implementing a custom CSV parser.
+This parser handles basic CSV structures, including fields containing
+commas enclosed in double quotes and escaped double quotes.
 """
+
+import io
 
 class CSVParser:
     """
-    A parser for CSV format that handles quoted fields and basic escapes.
+    A simple CSV parser that can handle quoted fields and escaped quotes.
     """
+
     def __init__(self, delimiter=',', quotechar='"'):
         """
-        Initialize the parser.
-        :param delimiter: The character used to separate fields (default: ',').
-        :param quotechar: The character used to quote fields (default: '"').
+        Initialize the parser with specific delimiter and quote character.
+
+        Args:
+            delimiter (str): The character used to separate fields.
+            quotechar (str): The character used to enclose fields containing special characters.
         """
         self.delimiter = delimiter
         self.quotechar = quotechar
 
-    def parse(self, text):
-        """
-        Parses a multi-line CSV string into a list of lists.
-        """
-        lines = text.strip().splitlines()
-        return [self.parse_line(line) for line in lines]
-
     def parse_line(self, line):
         """
-        Parses a single line of CSV text.
+        Parse a single line of CSV text into a list of fields.
+
+        Args:
+            line (str): A single line of CSV data.
+
+        Returns:
+            list: A list of strings representing the parsed fields.
         """
         fields = []
-        current_field = []
+        current_field = io.StringIO()
         in_quotes = False
         i = 0
-        while i < len(line):
+        n = len(line.rstrip('\r\n'))
+
+        while i < n:
             char = line[i]
+
             if char == self.quotechar:
-                # Handle escaped quotes (e.g., "")
-                if in_quotes and i + 1 < len(line) and line[i+1] == self.quotechar:
-                    current_field.append(self.quotechar)
+                if in_quotes and i + 1 < n and line[i+1] == self.quotechar:
+                    # Handle escaped quote (e.g., "")
+                    current_field.write(self.quotechar)
                     i += 1
                 else:
+                    # Toggle quote state
                     in_quotes = not in_quotes
             elif char == self.delimiter and not in_quotes:
-                fields.append("".join(current_field))
-                current_field = []
+                # End of field
+                fields.append(current_field.getvalue())
+                current_field = io.StringIO()
             else:
-                current_field.append(char)
+                # Regular character
+                current_field.write(char)
             i += 1
-        fields.append("".join(current_field))
+
+        fields.append(current_field.getvalue())
         return fields
 
 def run_demo():
@@ -55,20 +66,22 @@ def run_demo():
     Demonstrates the CSVParser with various edge cases.
     """
     parser = CSVParser()
-    csv_data = (
-        'Name,Occupation,"Location, City"\n'
-        'John Doe,Engineer,"New York, NY"\n'
-        '"Jane ""The Brain"" Smith",Scientist,"San Francisco, CA"'
-    )
-    
-    print("Input CSV Data:")
-    print("---------------")
-    print(csv_data)
-    print("\nParsed Rows:")
-    print("------------")
-    rows = parser.parse(csv_data)
-    for row in rows:
-        print(row)
+    test_cases = [
+        'plain,simple,fields',
+        '"quoted field","another, field",regular',
+        '"field with ""escaped"" quotes",normal,"comma, here"',
+        'empty,,field',
+    ]
+
+    print("Starting CSV Parser Demo...")
+    print("-" * 30)
+
+    for i, test_str in enumerate(test_cases, 1):
+        parsed = parser.parse_line(test_str)
+        print(f"Test Case {i}:")
+        print(f"  Input : {test_str}")
+        print(f"  Output: {parsed}")
+        print("-" * 30)
 
 if __name__ == '__main__':
     run_demo()
