@@ -1,23 +1,22 @@
 """
-Singly Linked List Implementation
-This module provides a basic implementation of a singly linked list data structure
-with common operations such as append, prepend, delete, and reverse.
+Singly Linked List implementation for verification.
+This module provides a basic singly linked list with common operations.
 """
 
 class Node:
     """
-    A class representing a node in a singly linked list.
+    Represents a single node in a linked list.
     """
     def __init__(self, data):
         """
-        Initialize a new node with data.
+        Initialize a node with data and a pointer to the next node.
         """
         self.data = data
         self.next = None
 
 class SinglyLinkedList:
     """
-    A class representing a singly linked list.
+    A class to represent and manipulate a singly linked list.
     """
     def __init__(self):
         """
@@ -33,10 +32,10 @@ class SinglyLinkedList:
         if not self.head:
             self.head = new_node
             return
-        last = self.head
-        while last.next:
-            last = last.next
-        last.next = new_node
+        current = self.head
+        while current.next:
+            current = current.next
+        current.next = new_node
 
     def prepend(self, data):
         """
@@ -48,36 +47,32 @@ class SinglyLinkedList:
 
     def delete(self, key):
         """
-        Delete the first occurrence of a node with the given data (key).
+        Delete the first occurrence of a node containing the specified key.
         """
-        temp = self.head
-
-        if temp is not None:
-            if temp.data == key:
-                self.head = temp.next
-                temp = None
-                return
-
-        prev = None
-        while temp is not None:
-            if temp.data == key:
-                break
-            prev = temp
-            temp = temp.next
-
-        if temp is None:
+        current = self.head
+        if current and current.data == key:
+            self.head = current.next
+            current = None
             return
-
-        prev.next = temp.next
-        temp = None
+        
+        prev = None
+        while current and current.data != key:
+            prev = current
+            current = current.next
+        
+        if current is None:
+            return
+        
+        prev.next = current.next
+        current = None
 
     def reverse(self):
         """
-        Reverse the linked list in-place.
+        Reverse the linked list in place.
         """
         prev = None
         current = self.head
-        while current is not None:
+        while current:
             next_node = current.next
             current.next = prev
             prev = current
@@ -86,7 +81,7 @@ class SinglyLinkedList:
 
     def display(self):
         """
-        Print the elements of the linked list.
+        Print the elements of the list in order.
         """
         elements = []
         current = self.head
@@ -96,23 +91,24 @@ class SinglyLinkedList:
         print(" -> ".join(elements) if elements else "Empty List")
 
 if __name__ == "__main__":
-    # Demo of SinglyLinkedList
-    sll = SinglyLinkedList()
-    
-    print("Appending 10, 20, 30:")
-    sll.append(10)
-    sll.append(20)
-    sll.append(30)
-    sll.display()
+    # Demonstration of SinglyLinkedList functionality
+    print("Creating a new Singly Linked List...")
+    llist = SinglyLinkedList()
+
+    print("\nAppending 10, 20, 30:")
+    llist.append(10)
+    llist.append(20)
+    llist.append(30)
+    llist.display()
 
     print("\nPrepending 5:")
-    sll.prepend(5)
-    sll.display()
+    llist.prepend(5)
+    llist.display()
 
     print("\nDeleting 20:")
-    sll.delete(20)
-    sll.display()
+    llist.delete(20)
+    llist.display()
 
     print("\nReversing the list:")
-    sll.reverse()
-    sll.display()
+    llist.reverse()
+    llist.display()
