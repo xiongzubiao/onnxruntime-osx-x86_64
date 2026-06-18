@@ -1,72 +1,70 @@
 """
 JSON Pretty-Printer Module
 
-This module provides a utility to format and print nested dictionary and list 
-structures in a human-readable JSON-like format.
+This module provides a simple utility to pretty-print nested dictionaries and lists
+into a human-readable JSON format.
 """
 
 import json
-from typing import Any, Union
 
-class JSONFormatter:
+class PrettyPrinter:
     """
-    A class to handle the formatting of JSON-compatible Python objects.
+    A class used to represent a JSON Pretty-Printer.
     """
 
-    def __init__(self, indent: int = 4):
+    def __init__(self, indent=4):
         """
-        Initialize the formatter.
-
-        Args:
-            indent (int): The number of spaces for each indentation level.
+        Parameters
+        ----------
+        indent : int, optional
+            The number of spaces to use for indentation (default is 4).
         """
         self.indent = indent
 
-    def format(self, data: Union[dict, list]) -> str:
+    def format(self, data):
         """
-        Convert a Python object (dict or list) into a pretty-printed string.
+        Formats a dictionary or list into a pretty-printed string.
 
-        Args:
-            data (Union[dict, list]): The data to format.
+        Parameters
+        ----------
+        data : dict or list
+            The data structure to format.
 
-        Returns:
-            str: The formatted string.
+        Returns
+        -------
+        str
+            The formatted JSON string.
         """
-        return json.dumps(data, indent=self.indent)
+        return json.dumps(data, indent=self.indent, sort_keys=True)
 
-def pretty_print(data: Any) -> None:
+def print_json(data, indent=4):
     """
-    Print the given data in a pretty format to the console.
+    Utility function to print formatted JSON data.
 
-    Args:
-        data (Any): The data to print.
+    Parameters
+    ----------
+    data : dict or list
+        The data to be printed.
+    indent : int, optional
+        Indentation size (default 4).
     """
-    formatter = JSONFormatter()
-    print(formatter.format(data))
+    pp = PrettyPrinter(indent=indent)
+    print(pp.format(data))
 
-if __name__ == "__main__":
-    # Demonstration of the JSON pretty-printer
+if __name__ == '__main__':
+    # Demonstration of the JSON Pretty-Printer
     sample_data = {
-        "name": "MemoryBox Repro",
+        "name": "MemoryBox",
         "version": "1.0.0",
-        "features": [
-            "GitHub Integration",
-            "Memory Retrieval",
-            "Tool Calling"
-        ],
+        "features": ["memory", "documents", "connectors"],
         "metadata": {
-            "author": "Assistant",
-            "timestamp": "2026-06-17",
-            "active": True
-        },
-        "nested_list": [
-            {"id": 1, "status": "ok"},
-            {"id": 2, "status": "pending"}
-        ]
+            "author": "Zubiao",
+            "active": True,
+            "tags": None
+        }
     }
-
-    print("--- Original Data ---")
-    print(sample_data)
     
-    print("\n--- Pretty Printed Data ---")
-    pretty_print(sample_data)
+    print("Original data (printed normally):")
+    print(sample_data)
+    print("\nPretty-printed data:")
+    print_json(sample_data)
