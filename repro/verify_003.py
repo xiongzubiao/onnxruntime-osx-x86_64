@@ -1,84 +1,69 @@
 """
-CSV Parser Module
-
-This module provides a basic implementation of a CSV parser that correctly handles
-fields containing commas, provided those fields are enclosed in double quotes.
+A simple CSV parser module that handles quoted fields.
 """
 
 import io
 
-class SimpleCSVParser:
+class CSVParser:
     """
-    A simple CSV parser that can handle quoted fields.
+    A parser for comma-separated values (CSV) that supports quoted fields.
     """
 
     def __init__(self, delimiter=',', quotechar='"'):
         """
         Initialize the parser with specific delimiter and quote character.
-
-        Args:
-            delimiter (str): The character used to separate fields.
-            quotechar (str): The character used to enclose fields containing the delimiter.
         """
         self.delimiter = delimiter
         self.quotechar = quotechar
 
-    def parse_row(self, line):
+    def parse_line(self, line):
         """
-        Parses a single line of CSV text.
-
-        Args:
-            line (str): A single line of CSV content.
-
-        Returns:
-            list: A list of strings representing the fields in the row.
-        """
-        fields = []
-        current_field = []
-        in_quotes = False
+        Parse a single line of CSV text.
         
+        Args:
+            line (str): The CSV line to parse.
+            
+        Returns:
+            list: A list of fields.
+        """
+        result = []
+        field = []
+        in_quotes = False
         i = 0
         while i < len(line):
             char = line[i]
-            
             if char == self.quotechar:
-                # Handle escaped quotes (double quotechar)
                 if in_quotes and i + 1 < len(line) and line[i+1] == self.quotechar:
-                    current_field.append(self.quotechar)
+                    # Escaped quote
+                    field.append(self.quotechar)
                     i += 1
                 else:
                     in_quotes = not in_quotes
             elif char == self.delimiter and not in_quotes:
-                fields.append("".join(current_field))
-                current_field = []
-            elif char in ('\r', '\n') and not in_quotes:
-                # End of line characters
+                result.append("".join(field).strip())
+                field = []
+            elif char in ('\n', '\r') and not in_quotes:
                 break
             else:
-                current_field.append(char)
+                field.append(char)
             i += 1
-            
-        fields.append("".join(current_field))
-        return fields
+        result.append("".join(field).strip())
+        return result
 
-def run_demo():
+def parse_csv(data):
     """
-    Demonstrates the SimpleCSVParser with various edge cases.
+    Parse a multiline CSV string into a list of lists.
     """
-    parser = SimpleCSVParser()
-    
-    test_cases = [
-        'name,age,city',
-        '"Doe, John",30,New York',
-        'Alice,"""Wonderland""",UK',
-        'Plain Field,"Field with , comma",Simple'
-    ]
-    
-    print("Starting CSV Parser Demo...\n")
-    for row in test_cases:
-        parsed = parser.parse_row(row)
-        print(f"Original: {row}")
-        print(f"Parsed:   {parsed}\n")
+    parser = CSVParser()
+    lines = data.strip().splitlines()
+    return [parser.parse_line(line) for line in lines]
 
 if __name__ == "__main__":
-    run_demo()
+    # Demonstration
+    csv_data = 'name,age,city\n"Doe, John",30,"New York"\n"Jane ""Queen"" Smith",25,London'
+    print("Parsing CSV data:")
+    print(csv_data)
+    print("\nResult:")
+    parsed = parse_csv(csv_data)
+    for row in parsed:
+        print(row)
