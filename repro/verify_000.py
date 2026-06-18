@@ -1,40 +1,32 @@
 """
-A complete, runnable Python program implementing a binary search tree (BST).
+Module for Binary Search Tree (BST) implementation.
+This module provides a basic BST with insertion, search, and inorder traversal.
 """
 
 class Node:
-    """
-    A class representing a node in a binary search tree.
-    """
+    """A node in a Binary Search Tree."""
     def __init__(self, key):
-        """
-        Initialize the node with a key and no children.
-        """
+        """Initialize a node with a key and no children."""
+        self.key = key
         self.left = None
         self.right = None
-        self.val = key
 
 class BST:
-    """
-    A class representing a binary search tree.
-    """
+    """Binary Search Tree implementation."""
     def __init__(self):
-        """
-        Initialize an empty binary search tree.
-        """
+        """Initialize an empty BST."""
         self.root = None
 
     def insert(self, key):
-        """
-        Insert a key into the binary search tree.
-        """
+        """Insert a key into the BST."""
         if self.root is None:
             self.root = Node(key)
         else:
             self._insert(self.root, key)
 
     def _insert(self, node, key):
-        if key < node.val:
+        """Helper method to recursively insert a key."""
+        if key < node.key:
             if node.left is None:
                 node.left = Node(key)
             else:
@@ -46,44 +38,44 @@ class BST:
                 self._insert(node.right, key)
 
     def search(self, key):
-        """
-        Search for a key in the binary search tree.
-        """
+        """Search for a key in the BST. Returns the node if found, else None."""
         return self._search(self.root, key)
 
     def _search(self, node, key):
-        if node is None or node.val == key:
+        """Helper method to recursively search for a key."""
+        if node is None or node.key == key:
             return node
-        if key < node.val:
+        if key < node.key:
             return self._search(node.left, key)
         return self._search(node.right, key)
 
     def inorder_traversal(self):
-        """
-        Perform an inorder traversal of the binary search tree.
-        """
-        res = []
-        self._inorder_traversal(self.root, res)
-        return res
+        """Perform inorder traversal and return keys as a list."""
+        result = []
+        self._inorder(self.root, result)
+        return result
 
-    def _inorder_traversal(self, node, res):
+    def _inorder(self, node, result):
+        """Helper method for recursive inorder traversal."""
         if node:
-            self._inorder_traversal(node.left, res)
-            res.append(node.val)
-            self._inorder_traversal(node.right, res)
+            self._inorder(node.left, result)
+            result.append(node.key)
+            self._inorder(node.right, result)
 
 if __name__ == '__main__':
-    # Demo
+    # Demonstration of the BST implementation
     bst = BST()
-    elements = [50, 30, 20, 40, 70, 60, 80]
-    for el in elements:
-        bst.insert(el)
-
-    print("Inorder traversal:", bst.inorder_traversal())
+    # Inserting values
+    keys_to_insert = [50, 30, 20, 40, 70, 60, 80]
+    print(f"Inserting keys: {keys_to_insert}")
+    for k in keys_to_insert:
+        bst.insert(k)
     
-    search_key = 40
-    result = bst.search(search_key)
-    if result:
-        print(f"Key {search_key} found in the tree.")
-    else:
-        print(f"Key {search_key} not found in the tree.")
+    # Inorder Traversal
+    print("Inorder traversal (should be sorted):", bst.inorder_traversal())
+    
+    # Searching
+    for search_key in [40, 99]:
+        found_node = bst.search(search_key)
+        status = "Found" if found_node else "Not Found"
+        print(f"Searching for {search_key}: {status}")
