@@ -1,54 +1,56 @@
 """
-This module provides a BankAccount class to demonstrate basic banking operations
-such as depositing, withdrawing, and tracking transaction history.
+This module provides a BankAccount class to manage deposits, withdrawals, and transaction history.
 """
 
 class BankAccount:
     """
-    A simple bank account class.
-    
+    A class to represent a bank account.
+
     Attributes:
+        owner (str): The name of the account holder.
         balance (float): The current balance of the account.
-        history (list): A list of transaction records.
+        transaction_history (list): A list of transaction records.
     """
 
-    def __init__(self, initial_balance=0.0):
+    def __init__(self, owner, balance=0.0):
         """
-        Initializes the BankAccount with an optional initial balance.
-        
+        Initializes the BankAccount with an owner and an optional starting balance.
+
         Args:
-            initial_balance (float): Starting balance for the account. Defaults to 0.0.
+            owner (str): The name of the account holder.
+            balance (float): The initial balance. Defaults to 0.0.
         """
-        self.balance = initial_balance
-        self.history = [f"Account created with balance: ${initial_balance:.2f}"]
+        self.owner = owner
+        self.balance = balance
+        self.transaction_history = []
+        if balance > 0:
+            self.transaction_history.append(f"Initial deposit: ${balance:.2f}")
 
     def deposit(self, amount):
         """
         Deposits a specified amount into the account.
-        
+
         Args:
-            amount (float): The amount to deposit. Must be positive.
+            amount (float): The amount to deposit.
         """
         if amount > 0:
             self.balance += amount
-            record = f"Deposited: ${amount:.2f}"
-            self.history.append(record)
-            print(record)
+            self.transaction_history.append(f"Deposited: ${amount:.2f}")
+            print(f"Successfully deposited ${amount:.2f}. New balance: ${self.balance:.2f}")
         else:
             print("Deposit amount must be positive.")
 
     def withdraw(self, amount):
         """
-        Withdraws a specified amount from the account if funds are available.
-        
+        Withdraws a specified amount from the account if funds are sufficient.
+
         Args:
-            amount (float): The amount to withdraw. Must be positive.
+            amount (float): The amount to withdraw.
         """
         if 0 < amount <= self.balance:
             self.balance -= amount
-            record = f"Withdrew: ${amount:.2f}"
-            self.history.append(record)
-            print(record)
+            self.transaction_history.append(f"Withdrew: ${amount:.2f}")
+            print(f"Successfully withdrew ${amount:.2f}. Remaining balance: ${self.balance:.2f}")
         elif amount > self.balance:
             print("Insufficient funds for withdrawal.")
         else:
@@ -57,33 +59,23 @@ class BankAccount:
     def get_history(self):
         """
         Returns the transaction history of the account.
-        
-        Returns:
-            list: A list of strings representing the transaction history.
-        """
-        return self.history
 
-    def get_balance(self):
-        """
-        Returns the current balance of the account.
-        
         Returns:
-            float: The current balance.
+            list: A list of transaction records.
         """
-        return self.balance
+        return self.transaction_history
 
 
 if __name__ == "__main__":
-    # Demonstration of the BankAccount class
-    print("--- BankAccount Demo ---")
-    account = BankAccount(100.0)
-    
+    # Demo of BankAccount class
+    print("--- Bank Account Demo ---")
+    account = BankAccount("John Doe", 100.0)
     account.deposit(50.0)
     account.withdraw(30.0)
-    account.withdraw(150.0)  # Should fail due to insufficient funds
-    account.deposit(25.50)
+    account.withdraw(150.0)  # Should fail
     
-    print(f"\nFinal Balance: ${account.get_balance():.2f}")
     print("\nTransaction History:")
     for entry in account.get_history():
-        print(f" - {entry}")
+        print(f"- {entry}")
+    
+    print(f"\nFinal Balance: ${account.balance:.2f}")
