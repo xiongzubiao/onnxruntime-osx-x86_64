@@ -1,27 +1,34 @@
 """
-A complete, runnable Python program implementing a Trie (Prefix Tree).
-This module provides a Trie class with insertion, search, and prefix matching capabilities.
+A complete, runnable Python program implementing a Trie data structure.
+This module provides a Trie class with support for insertion, search, and prefix matching.
 """
 
 class TrieNode:
-    """A node in the Trie data structure."""
+    """
+    A node in the Trie.
+    """
     def __init__(self):
+        """
+        Initialize the Trie node.
+        """
         self.children = {}
         self.is_end_of_word = False
 
 class Trie:
-    """Trie data structure implementation."""
-
+    """
+    A Trie (prefix tree) implementation.
+    """
     def __init__(self):
-        """Initialize the trie with a root node."""
+        """
+        Initialize the Trie.
+        """
         self.root = TrieNode()
 
     def insert(self, word: str) -> None:
         """
         Inserts a word into the trie.
         
-        Args:
-            word: The string to be inserted.
+        :param word: The word to insert.
         """
         node = self.root
         for char in word:
@@ -34,11 +41,8 @@ class Trie:
         """
         Returns if the word is in the trie.
         
-        Args:
-            word: The string to search for.
-            
-        Returns:
-            True if the word exists, False otherwise.
+        :param word: The word to search for.
+        :return: True if the word is in the trie, False otherwise.
         """
         node = self.root
         for char in word:
@@ -51,11 +55,8 @@ class Trie:
         """
         Returns if there is any word in the trie that starts with the given prefix.
         
-        Args:
-            prefix: The prefix string to check.
-            
-        Returns:
-            True if any word starts with the prefix, False otherwise.
+        :param prefix: The prefix to check.
+        :return: True if any word starts with the prefix, False otherwise.
         """
         node = self.root
         for char in prefix:
@@ -65,22 +66,20 @@ class Trie:
         return True
 
 if __name__ == "__main__":
-    # Demonstration of the Trie implementation
+    # Demonstration of the Trie functionality
     trie = Trie()
     
-    print("--- Trie Demonstration ---")
+    print("Inserting words: 'apple', 'app', 'application'")
+    trie.insert("apple")
+    trie.insert("app")
+    trie.insert("application")
     
-    words_to_insert = ["apple", "app", "application", "banana", "bat"]
-    print(f"Inserting words: {', '.join(words_to_insert)}")
-    for w in words_to_insert:
-        trie.insert(w)
+    print(f"Search 'apple': {trie.search('apple')}")        # Expected: True
+    print(f"Search 'app': {trie.search('app')}")            # Expected: True
+    print(f"Search 'appl': {trie.search('appl')}")          # Expected: False
+    print(f"Starts with 'appl': {trie.starts_with('appl')}") # Expected: True
+    print(f"Starts with 'ban': {trie.starts_with('ban')}")   # Expected: False
     
-    # Test Search
-    search_queries = ["apple", "app", "appl", "orange"]
-    for q in search_queries:
-        print(f"Search '{q}': {trie.search(q)}")
-    
-    # Test Starts With
-    prefix_queries = ["app", "ban", "cat"]
-    for p in prefix_queries:
-        print(f"Starts with '{p}': {trie.starts_with(p)}")
+    print("\nInserting word: 'banana'")
+    trie.insert("banana")
+    print(f"Search 'banana': {trie.search('banana')}")      # Expected: True
