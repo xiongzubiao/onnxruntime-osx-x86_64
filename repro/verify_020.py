@@ -1,67 +1,77 @@
 """
-This module contains a BankAccount class that supports deposits, withdrawals, and transaction history.
+Module for verifying bank account operations.
+This module provides a BankAccount class with basic transaction capabilities.
 """
 
 class BankAccount:
     """
-    A simple BankAccount class to track balance and transaction history.
+    A class representing a bank account with deposit, withdrawal, and history features.
     """
 
-    def __init__(self, account_holder, initial_balance=0.0):
+    def __init__(self, owner, balance=0):
         """
-        Initialize the BankAccount with an owner and an optional initial balance.
+        Initialize the bank account.
+
+        :param owner: The name of the account holder.
+        :param balance: The initial balance (default is 0).
         """
-        self.account_holder = account_holder
-        self.balance = initial_balance
-        self.transaction_history = []
-        self._add_to_history(f"Account created with balance: {initial_balance}")
+        self.owner = owner
+        self.balance = balance
+        self.history = []
+        self._add_to_history("Initial Balance", balance)
 
     def deposit(self, amount):
         """
-        Deposit a specified amount into the account.
+        Deposit money into the account.
+
+        :param amount: The amount to deposit.
         """
         if amount > 0:
             self.balance += amount
-            self._add_to_history(f"Deposited: {amount}")
-            print(f"Successfully deposited {amount}. New balance: {self.balance}")
+            self._add_to_history("Deposit", amount)
+            print(f"Deposited ${amount}. New balance: ${self.balance}")
         else:
             print("Deposit amount must be positive.")
 
     def withdraw(self, amount):
         """
-        Withdraw a specified amount from the account if funds are sufficient.
+        Withdraw money from the account.
+
+        :param amount: The amount to withdraw.
         """
         if 0 < amount <= self.balance:
             self.balance -= amount
-            self._add_to_history(f"Withdrew: {amount}")
-            print(f"Successfully withdrew {amount}. New balance: {self.balance}")
+            self._add_to_history("Withdrawal", amount)
+            print(f"Withdrew ${amount}. New balance: ${self.balance}")
         elif amount > self.balance:
-            print("Insufficient funds for this withdrawal.")
+            print("Insufficient funds.")
         else:
             print("Withdrawal amount must be positive.")
 
     def get_history(self):
         """
-        Return the transaction history as a list of strings.
+        Return the transaction history.
         """
-        return self.transaction_history
+        return self.history
 
-    def _add_to_history(self, message):
+    def _add_to_history(self, transaction_type, amount):
         """
-        Internal method to append a message to the transaction history.
+        Helper method to log transactions.
         """
-        self.transaction_history.append(message)
+        self.history.append({
+            "type": transaction_type,
+            "amount": amount,
+            "resulting_balance": self.balance
+        })
 
 if __name__ == "__main__":
-    # Demonstration of the BankAccount class
-    print("--- BankAccount Demo ---")
-    my_account = BankAccount("Alice", 100.0)
-    my_account.deposit(50.0)
-    my_account.withdraw(30.0)
-    my_account.withdraw(200.0)  # Should fail
+    # Demonstration of BankAccount functionality
+    print(f"--- BankAccount Demo ---")
+    account = BankAccount("Alice", 100)
+    account.deposit(50)
+    account.withdraw(30)
+    account.withdraw(150)  # Should fail
     
-    print("\\nTransaction History:")
-    for entry in my_account.get_history():
-        print(f"- {entry}")
-    
-    print(f"\\nFinal Balance: {my_account.balance}")
+    print("\nTransaction History:")
+    for entry in account.get_history():
+        print(f"{entry['type']}: ${entry['amount']} (Balance: ${entry['resulting_balance']})")
