@@ -1,8 +1,8 @@
 """
 JSON Pretty-Printer Module
 
-This module provides functionality to format nested Python dictionaries and lists
-into a human-readable JSON-like string format.
+This module provides a utility class to pretty-print nested Python dictionaries
+and lists in a JSON-like format.
 """
 
 import json
@@ -14,7 +14,7 @@ class JSONPrettyPrinter:
     Attributes
     ----------
     indent : int
-        The number of spaces to use for indentation (default is 4).
+        the number of spaces to use for indentation (default is 4)
     """
 
     def __init__(self, indent=4):
@@ -22,56 +22,54 @@ class JSONPrettyPrinter:
         Parameters
         ----------
         indent : int, optional
-            The number of spaces for indentation (default is 4).
+            The number of spaces for indentation (default is 4)
         """
         self.indent = indent
 
     def format(self, data):
         """
-        Formats a Python object (dict or list) into a pretty-printed string.
+        Formats the input data into a pretty-printed JSON string.
 
         Parameters
         ----------
         data : dict or list
-            The data to be formatted.
+            The nested data structure to format.
 
         Returns
         -------
         str
-            The pretty-printed string representation of the data.
+            The pretty-printed JSON string.
         """
         return json.dumps(data, indent=self.indent)
 
-def print_pretty_json(data, indent=4):
-    """
-    Helper function to print data in a pretty JSON format.
+    def print(self, data):
+        """
+        Prints the formatted JSON string to the console.
 
-    Parameters
-    ----------
-    data : dict or list
-        The data to be printed.
-    indent : int, optional
-        The number of spaces for indentation (default is 4).
-    """
-    printer = JSONPrettyPrinter(indent=indent)
-    print(printer.format(data))
+        Parameters
+        ----------
+        data : dict or list
+            The nested data structure to print.
+        """
+        print(self.format(data))
 
 if __name__ == "__main__":
-    # Demonstration of the JSONPrettyPrinter
+    # Demonstration of the JSONPrettyPrinter class
+    printer = JSONPrettyPrinter(indent=2)
+
     sample_data = {
-        "name": "John Doe",
-        "age": 30,
-        "is_developer": True,
-        "skills": ["Python", "Machine Learning", "ONNX"],
-        "address": {
-            "city": "Seattle",
-            "zip": "98101"
-        },
-        "projects": [
-            {"id": 1, "name": "Project Alpha", "status": "Completed"},
-            {"id": 2, "name": "Project Beta", "status": "In Progress"}
-        ]
+        "name": "MemoryBox",
+        "version": "1.0.0",
+        "features": ["Memories", "Documents", "Connectors"],
+        "metadata": {
+            "author": "xiongzubiao",
+            "active": True,
+            "stats": {
+                "users": 1000,
+                "uptime": "99.9%"
+            }
+        }
     }
 
-    print("Pretty Printing Nested Data:")
-    print_pretty_json(sample_data)
+    print("Pretty-printing sample data:")
+    printer.print(sample_data)
