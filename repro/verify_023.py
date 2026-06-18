@@ -1,6 +1,6 @@
 """
-This module provides a basic implementation of a singly linked list.
-It includes common operations such as append, prepend, delete, and reverse.
+Module for verifying singly linked list implementation.
+This module provides a Node and a SinglyLinkedList class with common operations.
 """
 
 class Node:
@@ -9,37 +9,37 @@ class Node:
     """
     def __init__(self, data):
         """
-        Initialize a new node with data.
+        Initialize a node with data.
         """
         self.data = data
         self.next = None
 
-class LinkedList:
+class SinglyLinkedList:
     """
     A class representing a singly linked list.
     """
     def __init__(self):
         """
-        Initialize an empty linked list.
+        Initialize an empty singly linked list.
         """
         self.head = None
 
     def append(self, data):
         """
-        Add a new node with the given data to the end of the list.
+        Append a new node with the given data to the end of the list.
         """
         new_node = Node(data)
         if not self.head:
             self.head = new_node
             return
-        last = self.head
-        while last.next:
-            last = last.next
-        last.next = new_node
+        current = self.head
+        while current.next:
+            current = current.next
+        current.next = new_node
 
     def prepend(self, data):
         """
-        Add a new node with the given data to the beginning of the list.
+        Prepend a new node with the given data to the beginning of the list.
         """
         new_node = Node(data)
         new_node.next = self.head
@@ -47,35 +47,32 @@ class LinkedList:
 
     def delete(self, key):
         """
-        Delete the first occurrence of a node with the given key (data).
+        Delete the first occurrence of a node with the given data (key).
         """
-        temp = self.head
-
-        if temp is not None:
-            if temp.data == key:
-                self.head = temp.next
-                temp = None
-                return
-
-        while temp is not None:
-            if temp.data == key:
-                break
-            prev = temp
-            temp = temp.next
-
-        if temp == None:
+        current = self.head
+        if current and current.data == key:
+            self.head = current.next
+            current = None
             return
 
-        prev.next = temp.next
-        temp = None
+        prev = None
+        while current and current.data != key:
+            prev = current
+            current = current.next
+
+        if current is None:
+            return
+
+        prev.next = current.next
+        current = None
 
     def reverse(self):
         """
-        Reverse the linked list in-place.
+        Reverse the singly linked list in-place.
         """
         prev = None
         current = self.head
-        while current is not None:
+        while current:
             next_node = current.next
             current.next = prev
             prev = current
@@ -84,31 +81,33 @@ class LinkedList:
 
     def display(self):
         """
-        Print the elements of the linked list.
+        Return a string representation of the list.
         """
         elements = []
         current = self.head
         while current:
             elements.append(str(current.data))
             current = current.next
-        print(" -> ".join(elements))
+        return " -> ".join(elements)
 
 if __name__ == "__main__":
-    llist = LinkedList()
+    # Demonstration of SinglyLinkedList functionality
+    llist = SinglyLinkedList()
+    
     print("Appending 1, 2, 3:")
     llist.append(1)
     llist.append(2)
     llist.append(3)
-    llist.display()
+    print(llist.display())
 
-    print("Prepending 0:")
+    print("\nPrepending 0:")
     llist.prepend(0)
-    llist.display()
+    print(llist.display())
 
-    print("Deleting 2:")
+    print("\nDeleting 2:")
     llist.delete(2)
-    llist.display()
+    print(llist.display())
 
-    print("Reversing the list:")
+    print("\nReversing list:")
     llist.reverse()
-    llist.display()
+    print(llist.display())
