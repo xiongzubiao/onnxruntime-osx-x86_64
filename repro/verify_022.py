@@ -1,101 +1,69 @@
 """
-Dijkstra's Shortest Path Algorithm Implementation.
-
-This module provides a Graph class and a Dijkstra implementation to find the
-shortest paths from a source node to all other nodes in a weighted graph
-represented by an adjacency list.
+Dijkstra's Shortest Path Algorithm implementation.
+This module provides a function to find the shortest path from a source node
+to all other nodes in a weighted graph represented as an adjacency list.
 """
 
 import heapq
 
-
-class Graph:
+def dijkstra(adj_list, start_node):
     """
-    Represents a directed graph using an adjacency list.
-    """
-
-    def __init__(self):
-        """Initializes an empty graph."""
-        self.adjacency_list = {}
-
-    def add_edge(self, u, v, weight):
-        """
-        Adds a directed edge from u to v with a given weight.
-
-        Args:
-            u: Starting node.
-            v: Ending node.
-            weight: Numeric weight of the edge.
-        """
-        if u not in self.adjacency_list:
-            self.adjacency_list[u] = []
-        self.adjacency_list[u].append((v, weight))
-
-    def get_neighbors(self, u):
-        """
-        Returns neighbors of a given node.
-
-        Args:
-            u: The node to get neighbors for.
-
-        Returns:
-            A list of tuples (neighbor, weight).
-        """
-        return self.adjacency_list.get(u, [])
-
-
-def dijkstra(graph, start_node):
-    """
-    Computes the shortest paths from start_node to all other reachable nodes.
+    Finds the shortest paths from the start_node to all other nodes in the graph.
 
     Args:
-        graph: A Graph instance.
+        adj_list (dict): Adjacency list where keys are node identifiers and values 
+                         are lists of tuples (neighbor, weight).
         start_node: The starting node for the algorithm.
 
     Returns:
-        A dictionary mapping each reachable node to its shortest distance from the start node.
+        dict: A dictionary mapping each node to its shortest distance from start_node.
     """
-    distances = {start_node: 0}
+    # Initialize distances with infinity and the start node with zero
+    distances = {node: float('inf') for node in adj_list}
+    if start_node not in distances:
+        distances[start_node] = 0
+    else:
+        distances[start_node] = 0
+    
+    # Priority queue to store nodes to visit: (distance, node)
     priority_queue = [(0, start_node)]
-    visited = set()
-
+    
     while priority_queue:
         current_distance, current_node = heapq.heappop(priority_queue)
-
-        if current_node in visited:
+        
+        # If we found a longer path than already recorded, skip it
+        if current_distance > distances.get(current_node, float('inf')):
             continue
-        visited.add(current_node)
-
-        for neighbor, weight in graph.get_neighbors(current_node):
+            
+        # Check neighbors
+        for neighbor, weight in adj_list.get(current_node, []):
             distance = current_distance + weight
-
-            if neighbor not in distances or distance < distances[neighbor]:
+            
+            # Ensure neighbor is in distances dict (for nodes only appearing as destinations)
+            if neighbor not in distances:
+                distances[neighbor] = float('inf')
+                
+            # If a shorter path is found, update and push to queue
+            if distance < distances[neighbor]:
                 distances[neighbor] = distance
                 heapq.heappush(priority_queue, (distance, neighbor))
-
+                
     return distances
 
-
-def run_demo():
-    """
-    Demonstrates the Dijkstra algorithm with a sample graph.
-    """
-    g = Graph()
-    g.add_edge('A', 'B', 4)
-    g.add_edge('A', 'C', 2)
-    g.add_edge('B', 'C', 5)
-    g.add_edge('B', 'D', 10)
-    g.add_edge('C', 'D', 3)
-    g.add_edge('D', 'E', 7)
-    g.add_edge('E', 'A', 8)
-
-    start = 'A'
-    print(f"Finding shortest paths from node: {start}")
-    results = dijkstra(g, start)
-
-    for node, dist in sorted(results.items()):
-        print(f"Distance to {node}: {dist}")
-
-
 if __name__ == "__main__":
-    run_demo()
+    # Example Graph: Adjacency List
+    # Nodes: A, B, C, D, E
+    graph = {
+        'A': [('B', 4), ('C', 2)],
+        'B': [('C', 5), ('D', 10)],
+        'C': [('D', 3)],
+        'D': [('E', 7)],
+        'E': []
+    }
+    
+    source = 'A'
+    print(f"Calculating shortest paths from node: {source}")
+    results = dijkstra(graph, source)
+    
+    for node, dist in sorted(results.items()):
+        print(f"Distance from {source} to {node}: {dist}")
