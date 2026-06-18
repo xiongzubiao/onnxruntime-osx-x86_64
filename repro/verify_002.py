@@ -1,68 +1,70 @@
 """
-JSON Pretty-Printer Module
+JSON Pretty Printer Module
 
-This module provides a simple implementation of a JSON pretty-printer 
-that can handle nested dictionaries and lists.
+This module provides functionality to format and print nested Python 
+dictionaries and lists in a human-readable JSON-like format.
 """
 
 import json
 
 class JSONPrettyPrinter:
     """
-    A class to handle pretty-printing of JSON-like data structures.
+    A class used to represent a JSON Pretty Printer.
+
+    Attributes:
+        indent (int): The number of spaces for indentation.
     """
 
     def __init__(self, indent=4):
         """
-        Initialize the pretty-printer with a specific indentation level.
+        Initializes the JSONPrettyPrinter with a specific indentation.
 
         Args:
-            indent (int): Number of spaces for indentation.
+            indent (int): The number of spaces for indentation (default is 4).
         """
         self.indent = indent
 
     def format(self, data):
         """
-        Format the given data into a pretty-printed string.
+        Formats a Python object (dict or list) into a pretty-printed string.
 
         Args:
-            data (dict|list): The data structure to format.
+            data (dict or list): The nested object to be formatted.
 
         Returns:
-            str: The pretty-printed string representation.
+            str: The pretty-printed JSON string.
         """
         return json.dumps(data, indent=self.indent)
 
-def pretty_print_json(data, indent=4):
+def print_json(data, indent=4):
     """
-    A helper function to pretty-print JSON data.
+    Convenience function to print a Python object as formatted JSON.
 
     Args:
-        data (dict|list): The data to print.
-        indent (int): Indentation level.
+        data (dict or list): The nested object to be printed.
+        indent (int): The number of spaces for indentation (default is 4).
     """
     printer = JSONPrettyPrinter(indent=indent)
     print(printer.format(data))
 
 if __name__ == "__main__":
-    # Demonstration data
+    # Demonstration of the JSON Pretty Printer
     sample_data = {
-        "name": "John Doe",
-        "age": 30,
-        "is_developer": True,
-        "skills": ["Python", "Machine Learning", "ONNX"],
-        "address": {
-            "street": "123 Main St",
-            "city": "Tech City",
-            "zip": "12345"
+        "user": "developer",
+        "active": True,
+        "profile": {
+            "name": "Zubiao Xiong",
+            "roles": ["Admin", "Developer", "Maintainer"],
+            "metadata": {
+                "id": 12345,
+                "tags": ["onnx", "runtime", "osx"]
+            }
         },
-        "projects": [
-            {"id": 1, "name": "Project A", "status": "Completed"},
-            {"id": 2, "name": "Project B", "status": "In Progress"}
+        "repositories": [
+            {"name": "onnxruntime-osx-x86_64", "branch": "master"},
+            {"name": "test-repo", "branch": "main"}
         ]
     }
 
-    print("Original Data:")
-    print(sample_data)
-    print("\nPretty-Printed Data:")
-    pretty_print_json(sample_data)
+    print("Pretty-printing sample nested data:")
+    print_json(sample_data)
