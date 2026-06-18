@@ -1,29 +1,31 @@
 """
 Dijkstra's Shortest Path Algorithm Implementation.
 
-This module provides a complete, runnable implementation of Dijkstra's algorithm
-for finding the shortest paths from a single source vertex to all other vertices
-in a weighted graph represented as an adjacency list.
+This module provides a robust implementation of Dijkstra's algorithm to find the
+shortest paths from a source node to all other nodes in a weighted graph
+represented by an adjacency list.
 """
 
 import heapq
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
+
 
 class Graph:
     """
-    A class representing a directed, weighted graph using an adjacency list.
+    Represents a weighted directed graph using an adjacency list.
     """
+
     def __init__(self):
-        """Initializes an empty graph."""
+        """Initialize an empty graph."""
         self.adjacency_list: Dict[str, List[Tuple[str, int]]] = {}
 
     def add_edge(self, u: str, v: str, weight: int):
         """
-        Adds a directed edge from vertex u to vertex v with the given weight.
-        
+        Add a weighted edge from node u to node v.
+
         Args:
-            u: Starting vertex.
-            v: Ending vertex.
+            u: Source node.
+            v: Destination node.
             weight: Weight of the edge.
         """
         if u not in self.adjacency_list:
@@ -34,53 +36,66 @@ class Graph:
 
     def dijkstra(self, start_node: str) -> Dict[str, float]:
         """
-        Computes the shortest distance from start_node to all other reachable nodes.
-        
+        Compute the shortest distances from start_node to all reachable nodes.
+
         Args:
-            start_node: The source vertex for pathfinding.
-            
+            start_node: The node to start the search from.
+
         Returns:
-            A dictionary mapping each node to its shortest distance from start_node.
+            A dictionary mapping node names to their shortest distance from start_node.
         """
+        # Distances initialized to infinity
         distances = {node: float('inf') for node in self.adjacency_list}
         distances[start_node] = 0
         
+        # Priority queue stores (distance, node)
         priority_queue = [(0, start_node)]
-        
+
         while priority_queue:
             current_distance, current_node = heapq.heappop(priority_queue)
-            
+
+            # If we found a longer path already, skip
             if current_distance > distances[current_node]:
                 continue
-                
-            for neighbor, weight in self.adjacency_list.get(current_node, []):
+
+            for neighbor, weight in self.adjacency_list[current_node]:
                 distance = current_distance + weight
-                
+
+                # If a shorter path is found
                 if distance < distances[neighbor]:
                     distances[neighbor] = distance
                     heapq.heappush(priority_queue, (distance, neighbor))
-                    
+
         return distances
+
 
 def run_demo():
     """
-    Sets up a sample graph and demonstrates the Dijkstra implementation.
+    Demonstrates the Dijkstra algorithm with a sample graph.
     """
     graph = Graph()
-    graph.add_edge('A', 'B', 4)
-    graph.add_edge('A', 'C', 2)
-    graph.add_edge('B', 'C', 5)
-    graph.add_edge('B', 'D', 10)
-    graph.add_edge('C', 'D', 3)
-    graph.add_edge('C', 'E', 8)
-    graph.add_edge('D', 'E', 2)
     
+    # Adding edges (u, v, weight)
+    edges = [
+        ('A', 'B', 4),
+        ('A', 'C', 2),
+        ('B', 'C', 5),
+        ('B', 'D', 10),
+        ('C', 'D', 3),
+        ('D', 'E', 7),
+        ('E', 'A', 8)
+    ]
+    
+    for u, v, w in edges:
+        graph.add_edge(u, v, w)
+
     start_node = 'A'
     print(f"Computing shortest paths from node: {start_node}")
     distances = graph.dijkstra(start_node)
-    
-    for node, dist in sorted(distances.items()):
+
+    for node, dist in distances.items():
         print(f"Distance to {node}: {dist}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     run_demo()
