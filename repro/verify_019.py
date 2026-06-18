@@ -1,112 +1,100 @@
 """
-A simple CSV parser module that handles quoted fields and escaped quotes.
+repro/verify_019.py
 
-This module provides a CSVParser class to parse CSV data from strings or files,
-correctly handling fields that contain commas, newlines, or escaped double quotes.
+A complete, runnable Python program implementing a CSV parser that handles quoted fields.
+This script demonstrates basic CSV parsing logic without relying on the built-in 'csv' module.
 """
-
-import io
-from typing import List, Iterator
-
 
 class CSVParser:
     """
-    A parser for Comma-Separated Values (CSV) data.
-    
-    Attributes:
-        delimiter (str): The character used to separate fields.
-        quotechar (str): The character used to quote fields containing special characters.
+    A class to parse CSV data from a string or file-like object.
+    Supports basic quoted field handling.
     """
 
-    def __init__(self, delimiter: str = ',', quotechar: str = '"'):
+    def __init__(self, delimiter=',', quotechar='"'):
         """
-        Initializes the CSVParser with a delimiter and quote character.
+        Initialize the CSV parser with custom delimiter and quote character.
 
         Args:
-            delimiter (str): The field separator. Defaults to ','.
-            quotechar (str): The quoting character. Defaults to '"'.
+            delimiter (str): The character separating fields.
+            quotechar (str): The character used to enclose fields containing delimiters.
         """
         self.delimiter = delimiter
         self.quotechar = quotechar
 
-    def parse_line(self, line: str) -> List[str]:
+    def parse_line(self, line):
         """
-        Parses a single line of CSV text into a list of fields.
+        Parses a single line of CSV text.
 
         Args:
-            line (str): The CSV line to parse.
+            line (str): A single CSV-formatted line.
 
         Returns:
-            List[str]: A list of field values.
+            list: A list of parsed fields.
         """
         fields = []
         current_field = []
         in_quotes = False
-        i = 0
         
+        i = 0
         while i < len(line):
             char = line[i]
             
-            if in_quotes:
-                if char == self.quotechar:
-                    # Check for escaped quote (double quotechar)
-                    if i + 1 < len(line) and line[i + 1] == self.quotechar:
-                        current_field.append(self.quotechar)
-                        i += 1
-                    else:
-                        in_quotes = False
+            if char == self.quotechar:
+                # Handle double quotes as an escaped quote
+                if in_quotes and i + 1 < len(line) and line[i+1] == self.quotechar:
+                    current_field.append(self.quotechar)
+                    i += 1
                 else:
-                    current_field.append(char)
+                    in_quotes = not in_quotes
+            elif char == self.delimiter and not in_quotes:
+                fields.append("".join(current_field))
+                current_field = []
+            elif char in ('\r', '\n') and not in_quotes:
+                # End of record
+                break
             else:
-                if char == self.quotechar:
-                    in_quotes = True
-                elif char == self.delimiter:
-                    fields.append(''.join(current_field))
-                    current_field = []
-                elif char in ('\r', '\n'):
-                    # Ignore trailing newlines
-                    break
-                else:
-                    current_field.append(char)
+                current_field.append(char)
             i += 1
             
-        fields.append(''.join(current_field))
+        fields.append("".join(current_field))
         return fields
 
-    def parse_stream(self, stream: Iterator[str]) -> List[List[str]]:
+    def parse_text(self, text):
         """
-        Parses a stream of CSV lines.
+        Parses multi-line CSV text.
 
         Args:
-            stream (Iterator[str]): An iterator providing CSV lines.
+            text (str): The CSV text to parse.
 
         Returns:
-            List[List[str]]: A list of parsed rows.
+            list: A list of lists, where each inner list represents a row.
         """
-        return [self.parse_line(line) for line in stream]
+        rows = []
+        for line in text.strip().splitlines():
+            if line:
+                rows.append(self.parse_line(line))
+        return rows
 
-
-def demo():
+def run_demo():
     """
-    Demonstrates the functionality of the CSVParser.
+    Runs a demonstration of the CSVParser with quoted fields and delimiters.
     """
-    csv_data = [
-        'Name,Age,Location',
-        '"Doe, John",30,"New York, NY"',
-        'Jane Smith,25,London',
-        '"The ""Great"" Gatsby",1925,"Long Island"'
-    ]
+    csv_data = """Name,Occupation,"Location, Country"
+"Doe, John",Engineer,"New York, USA"
+Jane Smith,"Data Scientist","London, ""UK"""
+"Bob ""The Builder""",Construction,Unknown
+"""
+    
+    print("--- CSV Data ---")
+    print(csv_data)
     
     parser = CSVParser()
-    print("Parsing CSV Data:")
-    print("-" * 20)
+    parsed_rows = parser.parse_text(csv_data)
     
-    for line in csv_data:
-        parsed_row = parser.parse_line(line)
-        print(f"Original: {line}")
-        print(f"Parsed  : {parsed_row}")
-        print("-" * 20)
-
+    print("\n--- Parsed Results ---")
+    for row in parsed_rows:
+        print(row)
 
 if __name__ == '__main__':
-    demo()
+    run_demo()
